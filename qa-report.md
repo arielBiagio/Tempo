@@ -1,4 +1,90 @@
-# QA Report: GLOW (2026-10-12)
+# QA Report: Tempo (antes GLOW)
+
+## Navbar +12 px y login compacto (2026-10-18)
+
+Margen inferior 4→16 px en navegador/instalado/fallback. Expectativa geométrica
+actualizada. Logo de login 240→160 px y separación con formulario 32→24 px;
+se mantiene el grupo centrado verticalmente y el formulario queda más cerca del
+centro. Sin cambios de autenticación. Solo comprobación estática/build, no QA
+visual ni E2E repetidos para estos ajustes de tamaño/margen.
+
+## Ajuste fino de navbar (2026-10-18)
+
+Por pedido del usuario se subió 4 px respecto al ajuste anterior, tanto en navegador
+como en modo instalado y su fallback. Se actualizó la expectativa geométrica del
+test a 4 px. Solo build; no se repitió QA ni E2E para este ajuste de margen.
+
+## Inicio de 2 segundos y logo más pequeño (2026-10-18)
+
+Logo máximo 220→180 px; salida desde 1600 ms y retirada a los 2000 ms.
+Sin barra de carga. Movimiento reducido conserva retirada rápida a los 200 ms.
+Typecheck/lint/build y 77/77 tests correctos antes y después. El E2E de inicio
+actualizado pasó (1/1, Chrome local): tamaño, fase de salida y retirada, navegación
+sin repetición. Sin QA completo, Supabase real ni comprobación de iPhone físico.
+
+## Cabecera y posición inferior en iOS; inicio simplificado (2026-10-18)
+
+**Veredicto: cambios locales correctos; confirmación en iPhone pendiente.**
+La captura del usuario muestra suavizado superior y una franja inferior. No se
+reprodujo la composición nativa ni se confirma un bug específico de iOS.
+
+- Cabecera opaca sin backdrop blur, eliminado el resplandor superior; meta de
+  status bar `black` en vez de `black-translucent`. Según [Apple](https://developer.apple.com/library/archive/documentation/AppleApplications/Reference/SafariHTMLRef/Articles/MetaTags.html),
+  este último permite contenido detrás de la barra. Mitigación, no diagnóstico
+  confirmado de la foto. No se altera el archivo del logo ni la autenticación.
+- Navbar: margen extra de navegador 8→0 px sobre el inset seguro; instalado 2→0 px.
+  Añadido fallback del indicador `navigator.standalone` para la regla instalada.
+  No se usaron offsets negativos ni tamaños de pantalla de un modelo concreto.
+- Inicio: logo máximo 290→220 px, eliminado indicador de carga; conserva duración
+  y salida animada, bloqueo temporal y compatibilidad con movimiento reducido.
+- Base y final: typecheck/lint/build correctos; 77/77 tests locales correctos.
+- 6/6 E2E focalizados en Chrome/WebKit: inicio, tamaño/sin barra, cabecera opaca,
+  fallback instalado y navbar anclada al viewport al cambiar altura. La fixture
+  del fallback simula una propiedad; no emula Safari instalado ni sus safe areas.
+  El nuevo test falló antes en la configuración translúcida, no reproduce el blur.
+- Capturas inspeccionadas: `tempo-splash-mobile.png` y
+  `tempo-ios-layout-webkit-production.png` en `qa-artifacts/`.
+- Sin QA completo, iPhone real ni cambios remotos. No commit/push/publicación.
+
+## Información de los días cerrada por defecto (2026-10-18)
+
+**Veredicto: comprobación focalizada correcta.** Las notas de las secciones y
+los cuadros Fundamento/Ejecución de cada ejercicio empiezan plegados. El botón
+Información y su animación se conservan; Resumen no cambia. `defaultExpanded`
+permite configurar el estado inicial sin cambiar el valor de otros consumidores.
+
+- Antes/después: typecheck, lint, build y 77/77 tests correctos.
+- 2/2 E2E locales en Chrome: estado inicial oculto/inert, abrir/cerrar con teclado,
+  independencia de cuadros, progreso intacto, cambio de día y movimiento reducido.
+- Sin QA completo, iPhone real ni escrituras en Supabase. Sin commit ni push.
+- `dist/` recompilado; el ZIP entregado antes de este cambio no se sobrescribió.
+
+## Identidad Tempo (2026-10-18)
+
+**Veredicto: comprobación focalizada correcta en builds locales.**
+
+Rebranding a Electric Slate: lima `#C7F464`, carbón `#121619`, tarjetas `#25323D`;
+logo original presentado en login/encabezado y entrada de 2,5 s. Exo 2 local en
+títulos/cifras; metadata, manifest e iconos Tempo. No se cambian IDs de rutinas,
+storage, consultas SQL, datos, endpoints MCP ni configuración remota.
+
+- Typecheck, lint y build correctos; **77/77** pruebas locales correctas.
+- **7/7 E2E focalizados**: entrada/transición, bloqueo de interacción detrás,
+  salida, ausencia de repetición al navegar, movimiento reducido, assets e iconos,
+  compatibilidad con la preferencia `glow-selected-routine`, viewport de 320 px.
+  Casos visuales en Chrome y WebKit; login, persistencia y autorización/rechazo
+  OAuth con una API Supabase simulada.
+- Axe: cero infracciones detectadas en login y resumen de vista previa, en ambos
+  motores. No es una auditoría completa de accesibilidad ni de todas las pantallas.
+- Capturas revisadas de login, resumen, entrenamiento y ancho pequeño. Se corrigió
+  el recorte del símbolo horizontal y se redujo el resplandor ambiental.
+- Un primer ensayo detectó una expectativa de test incorrecta: el nombre largo
+  del manifest incluye el lema; se comprueba ahora también `short_name: Tempo`.
+- Sin Lighthouse ni QA completo, producción ni iPhone/Safari real. Los simuladores
+  WebKit no acreditan la apariencia ni la safe area de una PWA instalada en iOS.
+- No se hace commit, push, publicación ni cambios de datos de producción.
+
+Detalles de implementación: [identidad Tempo](docs/tempo-brand.md).
 
 ## Cuadros informativos plegables (2026-10-14)
 

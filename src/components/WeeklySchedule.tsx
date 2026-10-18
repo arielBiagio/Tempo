@@ -60,7 +60,7 @@ export default function WeeklySchedule({ weeklySchedule, scienceFactors, onSelec
                 <div className="flex items-center gap-3">
                   <div
                     className="w-2 h-2 rounded-full"
-                    style={{ backgroundColor: sched.color }}
+                    style={{ backgroundColor: isDescanso ? '#657C8C' : '#C7F464' }}
                   ></div>
                   <span className="font-mono text-[10px] text-zinc-500 w-12">{sched.day}</span>
                   <span className={`font-sans text-xs font-medium ${isDescanso ? 'text-zinc-500' : 'text-white'}`}>
@@ -93,7 +93,7 @@ export default function WeeklySchedule({ weeklySchedule, scienceFactors, onSelec
         <div className="space-y-4">
           {scienceFactors.map((factor) => (
             <div key={factor.element} className="flex gap-2.5">
-              <CheckCircle2 className="w-4 h-4 text-[#7B61FF] mt-0.5 flex-shrink-0" />
+              <CheckCircle2 className="w-4 h-4 text-[#C7F464] mt-0.5 flex-shrink-0" />
               <div>
                 <h4 className="font-sans font-semibold text-xs text-zinc-200">
                   {factor.element}

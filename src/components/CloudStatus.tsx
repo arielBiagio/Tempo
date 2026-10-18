@@ -36,10 +36,10 @@ export default function CloudStatus({ progress, accountError }: Props) {
     <div className="relative" ref={ref}>
       <button type="button" onClick={() => setOpen(value => !value)} aria-label={`Progreso: ${status}${progress.pendingCount ? ` · ${progress.pendingCount} cambios pendientes` : ''}`} aria-expanded={open} aria-controls={open ? 'cloud-status' : undefined} className={`relative flex items-center justify-center w-10 h-9 rounded-xl border border-white/10 bg-white/[0.03] ${color} focus-visible:outline-2 focus-visible:outline-plasma`}>
         <Icon className={`w-5 h-5 ${waiting ? 'animate-pulse' : ''}`} aria-hidden="true" />
-        <span aria-hidden="true" className="absolute right-1.5 bottom-1.5 w-1.5 h-1.5 rounded-full bg-current ring-2 ring-[#0A0A14]" />
+        <span aria-hidden="true" className="absolute right-1.5 bottom-1.5 w-1.5 h-1.5 rounded-full bg-current ring-2 ring-[#121619]" />
       </button>
       <span role="status" aria-live="polite" className="sr-only">{status}{progress.pendingCount > 0 && ` · ${progress.pendingCount} cambios pendientes`}</span>
-      {open && <div id="cloud-status" className="absolute top-full right-0 mt-2 w-60 rounded-2xl border border-white/10 bg-[#101020] shadow-xl p-4">
+      {open && <div id="cloud-status" className="absolute top-full right-0 mt-2 w-60 rounded-2xl border border-white/10 bg-[#1C272F] shadow-xl p-4">
         <p className={`text-xs font-medium ${color}`}>{status}</p>
         {progress.pendingCount > 0 && <p className="text-xs text-zinc-400 mt-2">{progress.pendingCount} cambios pendientes de sincronizar.</p>}
         {unavailable && <p className="text-[11px] text-zinc-400 mt-2">Los cambios quedan guardados en este dispositivo.</p>}

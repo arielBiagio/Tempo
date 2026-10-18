@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import type { OAuthAuthorizationDetails } from '@supabase/supabase-js';
-import { Activity, LoaderCircle, ShieldCheck } from 'lucide-react';
+import { LoaderCircle, ShieldCheck } from 'lucide-react';
+import TempoLogo from './TempoLogo';
 import { supabase } from '../lib/supabase';
 import { getAuthorizationId, safeOAuthRedirect } from '../lib/oauth';
 
@@ -52,11 +53,11 @@ export default function OAuthConsentPage({ userId }: { userId: string | null }) 
   };
 
   return (
-    <div className="app-viewport w-full bg-[#030307] flex justify-center">
-      <main className="app-shell-height w-full max-w-md overflow-y-auto bg-[#07070E] px-6 pt-[calc(env(safe-area-inset-top,0px)+32px)] pb-[calc(env(safe-area-inset-bottom,0px)+28px)] flex flex-col justify-center gap-6">
+    <div className="app-viewport w-full bg-[#0B1013] flex justify-center">
+      <main className="app-shell-height w-full max-w-md overflow-y-auto bg-[#121619] px-6 pt-[calc(env(safe-area-inset-top,0px)+32px)] pb-[calc(env(safe-area-inset-bottom,0px)+28px)] flex flex-col justify-center gap-6">
         <header className="flex items-center justify-center gap-3">
-          <Activity className="w-7 h-7 text-plasma" aria-hidden="true" />
-          <h1 className="text-xl font-bold tracking-wider">GLOW</h1>
+          <h1 className="sr-only">Tempo</h1>
+          <TempoLogo compact className="tempo-consent-logo" />
         </header>
         <section className="glass-card border-glow rounded-3xl p-5 space-y-4" aria-label="Autorizar conexión">
           <ShieldCheck className="w-7 h-7 text-plasma-ink" aria-hidden="true" />
@@ -73,12 +74,12 @@ export default function OAuthConsentPage({ userId }: { userId: string | null }) 
             <p className="text-xs text-zinc-400">Autorizá únicamente agentes que reconozcas. Podés revocar la conexión desde Sesame.</p>
             <div className="flex gap-3">
               <button type="button" disabled={busy} onClick={() => void decide(false)} className="flex-1 rounded-xl border border-white/15 py-3 text-sm disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-plasma">Cancelar</button>
-              <button type="button" disabled={busy} onClick={() => void decide(true)} className="flex-1 rounded-xl bg-[#6F4DEB] py-3 text-sm font-semibold disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-plasma">{busy ? 'Procesando…' : 'Autorizar'}</button>
+              <button type="button" disabled={busy} onClick={() => void decide(true)} className="flex-1 rounded-xl bg-[#C7F464] text-primary py-3 text-sm font-semibold disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-plasma">{busy ? 'Procesando…' : 'Autorizar'}</button>
             </div>
           </>}
           {error && <p role="alert" className="text-sm text-rose-300">{error}</p>}
           {!loading && !details && authorizationId && userId && supabase && <button type="button" onClick={() => setAttempt(value => value + 1)} className="text-sm text-plasma-ink underline">Reintentar</button>}
-          <a href="/" className="block text-center text-xs text-zinc-400 underline">Volver a GLOW</a>
+          <a href="/" className="block text-center text-xs text-zinc-400 underline">Volver a Tempo</a>
         </section>
       </main>
     </div>

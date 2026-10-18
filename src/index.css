@@ -1,6 +1,14 @@
 @import "tailwindcss";
 
 @font-face {
+  font-family: 'Exo 2';
+  font-style: italic;
+  font-weight: 800;
+  font-display: swap;
+  src: url('@fontsource/exo-2/files/exo-2-latin-800-italic.woff2') format('woff2');
+}
+
+@font-face {
   font-family: 'Sora Variable';
   font-style: normal;
   font-weight: 100 800;
@@ -17,25 +25,38 @@
 }
 
 @theme {
-  --color-primary: #0A0A14;
-  --color-accent: #7B61FF;
-  --color-bg-light: #F0EFF4;
-  --color-dark-card: #18181B;
-  --color-deep-void: #0A0A14;
-  --color-plasma: #7B61FF;
-  --color-plasma-ink: #b4a0ff;
-  --color-muted: #9c9ca9;
-  --color-ghost: #F0EFF4;
-  --color-graphite: #18181B;
+  --color-primary: #121619;
+  --color-accent: #C7F464;
+  --color-bg-light: #F2F5ED;
+  --color-dark-card: #25323D;
+  --color-deep-void: #121619;
+  /* Existing class names stay compatible while their palette becomes Tempo. */
+  --color-plasma: #C7F464;
+  --color-plasma-ink: #D1F68B;
+  --color-muted: #A6B6C1;
+  --color-ghost: #F2F5ED;
+  --color-graphite: #25323D;
+  --color-zinc-950: #151C21;
+  --color-zinc-900: #1C272F;
+  --color-zinc-800: #34444F;
+  --color-zinc-700: #4A5D69;
+  --color-zinc-600: #657C8C;
+  --color-zinc-500: #8DA1AF;
+  --color-zinc-400: #AFBEC8;
+  --color-zinc-300: #D0DBE2;
+  --color-zinc-200: #E0E8ED;
+  --color-emerald-400: #B5DA9B;
+  --color-emerald-500: #91BB82;
 
   --font-sans: 'Sora Variable', sans-serif;
+  --font-display: 'Exo 2', 'Sora Variable', sans-serif;
   --font-drama: 'Instrument Serif', serif;
   --font-mono: 'Fira Code Variable', monospace;
 }
 
 @layer base {
   html, body {
-    background-color: #030307;
+    background-color: #0B1013;
     color: var(--color-ghost);
     font-family: var(--font-sans);
     margin: 0;
@@ -98,7 +119,7 @@
     background: transparent;
   }
   ::-webkit-scrollbar-thumb {
-    background: rgba(123, 97, 255, 0.15);
+    background: rgba(199, 244, 100, 0.2);
     border-radius: 9999px;
   }
   ::-webkit-scrollbar-thumb:hover {
@@ -106,21 +127,50 @@
   }
 }
 
+.tempo-content { width: 100%; height: 100%; }
+.tempo-content h1,
+.tempo-content h2 { font-family: var(--font-display); font-weight: 800; font-style: italic; letter-spacing: 0.01em; }
+.tempo-content .tabular-nums { font-family: var(--font-display); font-weight: 800; font-style: italic; }
+.tempo-logo { display: block; flex-shrink: 0; overflow: visible; }
+.tempo-header-logo { width: 144px; height: 36px; }
+.tempo-consent-logo { width: 180px; height: 45px; }
+.tempo-login-brand { display: flex; justify-content: center; }
+.tempo-login-logo { width: min(160px, 44vw); height: auto; }
+.tempo-startup {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  padding: max(24px, env(safe-area-inset-top, 0px)) 24px max(24px, env(safe-area-inset-bottom, 0px));
+  background: #121619;
+  background-image: radial-gradient(ellipse at 50% 48%, rgba(199, 244, 100, 0.055), transparent 55%);
+  opacity: 1;
+  transition: opacity 400ms ease, transform 400ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.tempo-startup[data-phase='exiting'] { opacity: 0; transform: scale(1.025); pointer-events: none; }
+.tempo-startup-center { display: flex; justify-content: center; align-items: center; }
+.tempo-startup-logo { width: min(180px, 48vw); height: auto; animation: tempo-logo-in 650ms cubic-bezier(0.22, 1, 0.36, 1) both; }
+@keyframes tempo-logo-in { from { opacity: 0; transform: translateY(12px) scale(0.96); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@media (prefers-reduced-motion: reduce) {
+  .tempo-startup, .tempo-startup-logo { animation: none; transition: none; }
+}
+
 @layer utilities {
   .text-glow {
-    text-shadow: 0 0 10px rgba(123, 97, 255, 0.4), 0 0 20px rgba(123, 97, 255, 0.2);
+    text-shadow: 0 0 16px rgba(199, 244, 100, 0.15);
   }
   .border-glow {
-    box-shadow: 0 0 15px rgba(123, 97, 255, 0.1);
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.12);
   }
   .glass-card {
-    background: rgba(24, 24, 27, 0.65);
+    background: rgba(37, 50, 61, 0.92);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(202, 221, 232, 0.09);
   }
   .plasma-gradient-text {
-    background: linear-gradient(135deg, #FFF 30%, #7B61FF 100%);
+    background: linear-gradient(135deg, #F2F5ED 30%, #C7F464 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
   }
@@ -141,15 +191,17 @@
   @keyframes app-shell-in { from { opacity: 0; } to { opacity: 1; } }
 
   .bottom-nav-position {
-    bottom: calc(env(safe-area-inset-bottom, 0px) + 8px);
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 16px);
   }
 
   /* Installed app: keep the pill close to the bottom instead of adding another safe-area gap. */
   @media (display-mode: standalone), (display-mode: fullscreen) {
     .bottom-nav-position {
-      bottom: 2px;
+      bottom: 16px;
     }
   }
+
+  html[data-ios-standalone='true'] .bottom-nav-position { bottom: 16px; }
 
   .liquid-nav {
     position: relative;
@@ -157,7 +209,7 @@
     overflow: hidden;
     border-radius: 999px;
     border: 1px solid rgba(255, 255, 255, 0.18);
-    background: rgba(20, 20, 32, 0.94);
+    background: rgba(28, 39, 47, 0.96);
     box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35),
       inset 0 1px 0 rgba(255, 255, 255, 0.32),
       inset 0 -1px 0 rgba(255, 255, 255, 0.06);
@@ -165,7 +217,7 @@
 
   @supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
     .liquid-nav {
-      background: linear-gradient(145deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.035) 45%, rgba(167, 139, 250, 0.075)), rgba(14, 14, 24, 0.42);
+      background: linear-gradient(145deg, rgba(225, 240, 247, 0.1), rgba(255, 255, 255, 0.025) 45%, rgba(199, 244, 100, 0.025)), rgba(24, 34, 42, 0.8);
       backdrop-filter: blur(22px) saturate(180%);
       -webkit-backdrop-filter: blur(22px) saturate(180%);
     }
@@ -182,7 +234,7 @@
   .liquid-nav::before {
     inset: 0;
     background: radial-gradient(ellipse at 12% 0%, rgba(255, 255, 255, 0.18), transparent 50%),
-      radial-gradient(ellipse at 100% 100%, rgba(196, 181, 253, 0.09), transparent 45%);
+      radial-gradient(ellipse at 100% 100%, rgba(199, 244, 100, 0.06), transparent 45%);
   }
 
   .liquid-nav::after {
@@ -199,24 +251,25 @@
     bottom: 0;
     pointer-events: none;
     border-radius: 999px;
-    border: 1px solid rgba(221, 214, 254, 0.23);
-    background: linear-gradient(150deg, rgba(255, 255, 255, 0.16), rgba(167, 139, 250, 0.16) 55%, rgba(123, 97, 255, 0.1));
+    border: 1px solid rgba(224, 255, 169, 0.6);
+    background: linear-gradient(145deg, #DFFFAB, #C7F464 65%, #B9E659);
     box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.25), inset 0 -1px 1px rgba(255, 255, 255, 0.04), 0 3px 12px rgba(0, 0, 0, 0.1);
     transition: left 450ms cubic-bezier(0.22, 1, 0.36, 1), width 450ms cubic-bezier(0.22, 1, 0.36, 1);
   }
 
   .liquid-nav-tab {
-    color: #b4b4c2;
+    color: #B1C1CC;
     transition: color 200ms ease, transform 200ms ease;
   }
 
-  .liquid-nav-tab[data-active='true'] { color: #e0d6ff; }
-  .liquid-nav-tab:hover { color: #f4f0ff; }
+  .liquid-nav-tab[data-active='true'] { color: #121619; }
+  .liquid-nav-tab:hover { color: #F2F5ED; }
+  .liquid-nav-tab[data-active='true']:hover { color: #121619; }
   .liquid-nav-tab:active { transform: scale(0.95); }
-  .liquid-nav-tab:focus-visible { outline: 2px solid #c4b5fd; outline-offset: -3px; }
+  .liquid-nav-tab:focus-visible { outline: 2px solid #C7F464; outline-offset: -3px; }
 
   @media (prefers-reduced-transparency: reduce) {
-    .liquid-nav { background: #141420; backdrop-filter: none; -webkit-backdrop-filter: none; }
+    .liquid-nav { background: #25323D; backdrop-filter: none; -webkit-backdrop-filter: none; }
   }
 
   .reset-progress-dialog {
@@ -227,11 +280,11 @@
     width: min(340px, calc(100vw - 40px));
     max-height: calc(100dvh - 48px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
     overflow-y: auto;
-    border: 1px solid rgba(123, 97, 255, 0.25);
+    border: 1px solid rgba(199, 244, 100, 0.25);
     border-radius: 1.5rem;
-    background: #10101c;
+    background: #1C272F;
     color: var(--color-ghost);
-    box-shadow: 0 30px 90px rgba(0, 0, 0, 0.65), 0 0 40px rgba(123, 97, 255, 0.08);
+    box-shadow: 0 30px 90px rgba(0, 0, 0, 0.5);
   }
 
   .reset-progress-dialog[open] {
@@ -239,13 +292,13 @@
   }
 
   .reset-progress-dialog::backdrop {
-    background: rgba(3, 3, 7, 0.78);
+    background: rgba(11, 16, 19, 0.78);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
   }
 
   .reset-progress-panel {
-    background: linear-gradient(145deg, rgba(123, 97, 255, 0.05), transparent 60%);
+    background: linear-gradient(145deg, rgba(199, 244, 100, 0.04), transparent 60%);
   }
 
   .info-panel-toggle {
@@ -255,7 +308,7 @@
   }
 
   .info-panel-toggle:hover { background-color: rgba(255, 255, 255, 0.025); }
-  .info-panel-toggle:focus-visible { outline: 2px solid #c4b5fd; outline-offset: -3px; }
+  .info-panel-toggle:focus-visible { outline: 2px solid #C7F464; outline-offset: -3px; }
 
   .info-panel-body {
     display: grid;
@@ -277,7 +330,7 @@
   .info-panel[data-expanded='true'] > .info-panel-toggle .info-panel-chevron { transform: rotate(180deg); }
 
   .summary-number-loading {
-    background: linear-gradient(100deg, #52525b 20%, #c4b5fd 45%, #52525b 70%);
+    background: linear-gradient(100deg, #A6B6C1 20%, #C7F464 45%, #A6B6C1 70%);
     background-size: 250% 100%;
     background-clip: text;
     -webkit-background-clip: text;

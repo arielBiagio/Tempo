@@ -70,7 +70,7 @@ export default function WorkoutConsole({
               cx="40"
               cy="40"
               r={radius}
-              className="stroke-[#131322] fill-none"
+              className="stroke-[#33434D] fill-none"
               strokeWidth="5"
             />
             <circle
@@ -110,7 +110,7 @@ export default function WorkoutConsole({
             </div>
 
             {section.note && (
-              <CollapsibleInfo context={section.title}>
+              <CollapsibleInfo context={section.title} defaultExpanded={false}>
                 <p className="leading-relaxed font-sans">{section.note}</p>
               </CollapsibleInfo>
             )}

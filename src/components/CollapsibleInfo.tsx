@@ -7,10 +7,11 @@ interface Props {
   icon?: LucideIcon;
   tone?: 'plasma' | 'emerald';
   className?: string;
+  defaultExpanded?: boolean;
 }
 
-export default function CollapsibleInfo({ context, children, icon: Icon = Info, tone = 'plasma', className = '' }: Props) {
-  const [expanded, setExpanded] = useState(true);
+export default function CollapsibleInfo({ context, children, icon: Icon = Info, tone = 'plasma', className = '', defaultExpanded = true }: Props) {
+  const [expanded, setExpanded] = useState(defaultExpanded);
   const contentId = `info-${useId()}`;
   const emerald = tone === 'emerald';
 

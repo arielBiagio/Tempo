@@ -1,6 +1,8 @@
-# GLOW
+# Tempo
 
 Aplicación web para organizar rutinas de entrenamiento y registrar el progreso diario. Permite seguir ejercicios y series, guardar el avance en la nube y consultar un resumen de la actividad.
+
+[Repositorio en GitHub](https://github.com/arielBiagio/Tempo)
 
 ## Funcionalidades
 
@@ -11,6 +13,7 @@ Aplicación web para organizar rutinas de entrenamiento y registrar el progreso 
 - Resumen de días y semanas con actividad, sesiones completas, ejercicios, series y minutos estimados.
 - Guardado local y sincronización de cambios pendientes al recuperar la conexión, con la sesión y rutina ya cargadas.
 - Interfaz adaptada a móviles, saludo personalizado y estado de guardado en la nube.
+- Identidad Electric Slate, pantalla de inicio animada y cuadros informativos plegables.
 
 Los minutos del Resumen se calculan a partir de la duración prevista de las sesiones completas; no representan tiempo cronometrado.
 
@@ -68,7 +71,12 @@ Las pruebas utilizan datos de ejemplo, PostgreSQL embebido y una API de Supabase
 
 - [Configuración de Supabase](docs/supabase-setup.md).
 - [Arquitectura y almacenamiento](docs/backend-supabase.md).
-- [Conectar GLOW con Sesame mediante MCP y OAuth](docs/mcp-sesame.md) — consultas de solo lectura de rutinas, calendario y estadísticas.
+- [Conectar Tempo con Sesame mediante MCP y OAuth](docs/mcp-sesame.md) — consultas de solo lectura de rutinas, calendario y estadísticas.
 - [Informe de QA y rendimiento](qa-report.md).
+- [Identidad visual Tempo y compatibilidad](docs/tempo-brand.md).
 
 Las rutinas se definen en `public/routines/`. Al personalizarlas, conservá los IDs existentes y aumentá la versión cuando cambies la prescripción para no alterar el historial.
+
+Por compatibilidad con el historial existente, los identificadores internos
+`glow-*` y los nombres SQL/MCP conservan su denominación anterior. La app y el
+repositorio se llaman Tempo; el cambio de marca no requiere migrar los datos.

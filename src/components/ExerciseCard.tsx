@@ -33,7 +33,7 @@ function ExerciseCard({ exercise, isCompleted, completedSets = [], onToggleSet, 
           onClick={() => onToggleCompleted(exercise.id)}
           className={`w-6 h-6 rounded-full flex items-center justify-center border transition-all duration-300 ${
             isCompleted
-              ? 'bg-emerald-500 border-emerald-500 text-white'
+              ? 'bg-emerald-500 border-emerald-500 text-primary'
               : 'border-zinc-700 hover:border-zinc-500 bg-zinc-950'
           }`}
           aria-label={isCompleted ? `Marcar ${exercise.name} como incompleto` : `Marcar ${exercise.name} como completado`}
@@ -105,7 +105,7 @@ function ExerciseCard({ exercise, isCompleted, completedSets = [], onToggleSet, 
                       <div className={`w-3.5 h-3.5 rounded flex items-center justify-center border transition-all ${
                         isChecked ? 'border-plasma bg-plasma' : 'border-zinc-700 bg-zinc-950'
                       }`}>
-                        {isChecked && <Check className="w-2.5 h-2.5 text-white" />}
+                        {isChecked && <Check className="w-2.5 h-2.5 text-primary" />}
                       </div>
                       Serie {idx + 1}
                     </button>
@@ -120,7 +120,7 @@ function ExerciseCard({ exercise, isCompleted, completedSets = [], onToggleSet, 
           )}
 
           {exercise.science && (
-            <CollapsibleInfo context={`Fundamento de ${exercise.name}`} icon={Activity}>
+            <CollapsibleInfo context={`Fundamento de ${exercise.name}`} icon={Activity} defaultExpanded={false}>
               <div>
                 <span className="block text-[9px] font-mono uppercase tracking-widest text-plasma-ink font-semibold">EMG / Sports Science</span>
                 <p className="text-zinc-300 italic font-light mt-0.5 leading-relaxed font-sans text-xs">
@@ -131,7 +131,7 @@ function ExerciseCard({ exercise, isCompleted, completedSets = [], onToggleSet, 
           )}
 
           {exercise.tip && (
-            <CollapsibleInfo context={`Ejecución de ${exercise.name}`} icon={AlertCircle} tone="emerald">
+            <CollapsibleInfo context={`Ejecución de ${exercise.name}`} icon={AlertCircle} tone="emerald" defaultExpanded={false}>
               <div>
                 <span className="block text-[9px] font-mono uppercase tracking-widest text-emerald-400 font-semibold">Ejecución</span>
                 <p className="text-zinc-400 leading-relaxed mt-0.5 text-xs">{exercise.tip}</p>

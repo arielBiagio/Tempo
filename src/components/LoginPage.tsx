@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react';
-import { Activity, ArrowRight, Eye, EyeOff, LoaderCircle, LockKeyhole, Mail } from 'lucide-react';
+import { ArrowRight, Eye, EyeOff, LoaderCircle, LockKeyhole, Mail } from 'lucide-react';
 import { cloudConfigured, supabase } from '../lib/supabase';
+import TempoLogo from './TempoLogo';
 
 interface Props { loading: boolean; sessionError: string; onLocalPreview: () => void }
 
@@ -41,16 +42,14 @@ export default function LoginPage({ loading, sessionError, onLocalPreview }: Pro
   };
 
   return (
-    <div className="app-viewport w-full bg-[#030307] flex justify-center">
-      <main className="app-shell-height relative w-full max-w-md overflow-y-auto bg-[#07070E] px-6 pt-[calc(env(safe-area-inset-top,0px)+32px)] pb-[calc(env(safe-area-inset-bottom,0px)+28px)] md:border-x md:border-white/5">
-        <div aria-hidden="true" className="absolute top-28 -left-20 w-80 h-80 bg-plasma/15 blur-[90px] rounded-full pointer-events-none" />
+    <div className="app-viewport w-full bg-[#0B1013] flex justify-center">
+      <main className="app-shell-height relative w-full max-w-md overflow-y-auto bg-[#121619] px-6 pt-[calc(env(safe-area-inset-top,0px)+32px)] pb-[calc(env(safe-area-inset-bottom,0px)+28px)] md:border-x md:border-white/5">
+        <div aria-hidden="true" className="absolute top-28 -left-20 w-80 h-80 bg-plasma/5 blur-[90px] rounded-full pointer-events-none" />
         <div aria-hidden="true" className="absolute bottom-0 right-0 w-56 h-56 bg-emerald-500/5 blur-[80px] rounded-full pointer-events-none" />
-        <div className="relative flex min-h-full flex-col justify-center gap-8">
-          <header>
-            <div className="flex items-center justify-center gap-3">
-              <span className="w-10 h-10 rounded-xl bg-plasma/10 border border-plasma/30 flex items-center justify-center"><Activity className="w-5 h-5 text-plasma" aria-hidden="true" /></span>
-              <h1 className="text-xl tracking-wider font-bold text-white">GLOW</h1>
-            </div>
+        <div className="relative flex min-h-full flex-col justify-center gap-6">
+          <header className="tempo-login-brand">
+            <h1 className="sr-only">Tempo</h1>
+            <TempoLogo className="tempo-login-logo" />
           </header>
 
           <section className="glass-card border-glow rounded-[1.75rem] p-5 min-h-[314px] flex flex-col justify-center" aria-label="Acceso a tu cuenta">
@@ -73,7 +72,7 @@ export default function LoginPage({ loading, sessionError, onLocalPreview }: Pro
                   </div>
                 </div>
                 {(error || sessionError) && <p id="login-error" role="alert" className="rounded-xl border border-rose-400/20 bg-rose-500/5 p-3 text-xs text-rose-300 leading-relaxed">{error || sessionError}</p>}
-                <button type="submit" disabled={busy || !cloudConfigured} className="w-full flex justify-center items-center gap-2 rounded-xl bg-[#6F4DEB] py-3 text-sm font-semibold text-white hover:bg-[#7755F2] transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-plasma disabled:opacity-50">{busy ? <><LoaderCircle className="w-4 h-4 animate-spin" aria-hidden="true" />Ingresando…</> : <>Ingresar<ArrowRight className="w-4 h-4" aria-hidden="true" /></>}</button>
+                <button type="submit" disabled={busy || !cloudConfigured} className="w-full flex justify-center items-center gap-2 rounded-xl bg-[#C7F464] py-3 text-sm font-semibold text-primary hover:bg-[#D6FA8B] transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-plasma disabled:opacity-50">{busy ? <><LoaderCircle className="w-4 h-4 animate-spin" aria-hidden="true" />Ingresando…</> : <>Ingresar<ArrowRight className="w-4 h-4" aria-hidden="true" /></>}</button>
               </form>
               {!cloudConfigured && <div className="mt-4 text-center space-y-3">
                 <p className="text-xs text-zinc-400">El inicio de sesión todavía no está disponible.</p>

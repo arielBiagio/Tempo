@@ -7,7 +7,8 @@ import RoutineSelector from './RoutineSelector';
 import AccountPanel from './AccountPanel';
 import ProgressPanel from './ProgressPanel';
 import ResetProgressDialog from './ResetProgressDialog';
-import { Activity, BellRing } from 'lucide-react';
+import { BellRing } from 'lucide-react';
+import TempoLogo from './TempoLogo';
 import { useWorkoutProgress } from '../hooks/useWorkoutProgress';
 import { useWorkoutRoutines } from '../hooks/useWorkoutRoutines';
 import type { useAuth } from '../hooks/useAuth';
@@ -62,7 +63,7 @@ export default function WorkoutApp({ auth, onLogin }: { auth: ReturnType<typeof 
     void import('canvas-confetti').then(({ default: confetti }) => confetti({
       particleCount: 120,
       spread: 60,
-      colors: ['#7B61FF', '#10B981', '#F59E0B', '#EF4444'],
+      colors: ['#C7F464', '#10B981', '#F59E0B', '#EF4444'],
       origin: { y: 0.75 },
       disableForReducedMotion: true,
     })).catch(() => { /* A visual effect must never interrupt saved progress. */ });
@@ -120,31 +121,22 @@ export default function WorkoutApp({ auth, onLogin }: { auth: ReturnType<typeof 
   };
 
   return (
-    <div className="app-viewport w-full bg-[#07070E] md:bg-[#030307] flex items-center justify-center select-none">
+    <div className="app-viewport w-full bg-[#121619] md:bg-[#0B1013] flex items-center justify-center select-none">
 
-      <div className="app-shell app-shell-height w-full max-w-md bg-[#07070E] flex flex-col relative md:border-x md:border-white/5 md:shadow-2xl overflow-hidden">
+      <div className="app-shell app-shell-height w-full max-w-md bg-[#121619] flex flex-col relative md:border-x md:border-white/5 md:shadow-2xl overflow-hidden">
 
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-80 h-80 rounded-full bg-plasma/20 blur-[85px] pointer-events-none"></div>
-        <div className="absolute bottom-20 right-[-10%] w-64 h-64 rounded-full bg-emerald-500/10 blur-[80px] pointer-events-none"></div>
-        <div className="absolute top-[35%] left-[-20%] w-56 h-56 rounded-full bg-[#7B61FF]/15 blur-[75px] pointer-events-none"></div>
+        <div aria-hidden="true" className="absolute bottom-20 right-[-10%] w-64 h-64 rounded-full bg-emerald-500/5 blur-[80px] pointer-events-none"></div>
 
         {/* Top Navbar with iOS Safe Area Inset Support */}
-        <header className="relative shrink-0 bg-[#0A0A14]/85 backdrop-blur-md border-b border-white/5 px-5 pt-[calc(env(safe-area-inset-top,0px)+12px)] pb-3 flex items-center justify-between select-none z-50">
-          <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-md bg-plasma/10 border border-plasma/30 flex items-center justify-center">
-              <Activity className="w-3.5 h-3.5 text-plasma-ink animate-pulse" />
-            </div>
-            <span className="font-sans font-bold text-sm tracking-wider text-white">
-              GLOW
-            </span>
-          </div>
+        <header className="relative shrink-0 bg-[#121619] border-b border-white/5 px-5 pt-[calc(env(safe-area-inset-top,0px)+12px)] pb-3 flex items-center justify-between select-none z-50">
+          <TempoLogo compact className="tempo-header-logo" />
 
           <CloudStatus progress={progress} accountError={auth.error} />
         </header>
 
         {toastMessage && (
           <div
-            className="absolute top-[calc(env(safe-area-inset-top,0px)+60px)] left-4 right-4 z-50 bg-[#101020] border border-emerald-500/30 text-emerald-400 font-mono text-[9px] uppercase tracking-wider py-2.5 px-4 rounded-xl shadow-lg shadow-emerald-500/5 flex items-center justify-center gap-2 animate-bounce"
+            className="absolute top-[calc(env(safe-area-inset-top,0px)+60px)] left-4 right-4 z-50 bg-[#1C272F] border border-emerald-500/30 text-emerald-400 font-mono text-[9px] uppercase tracking-wider py-2.5 px-4 rounded-xl shadow-lg shadow-emerald-500/5 flex items-center justify-center gap-2 animate-bounce"
             role="alert"
             aria-live="assertive"
           >

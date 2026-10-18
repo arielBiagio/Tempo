@@ -25,7 +25,8 @@ export default function RoutineSelector({
   const menuRef = useRef<HTMLDivElement>(null);
   const returnFocus = useRef(false);
   const selectedEntry = routines.find((routine) => routine.id === selectedRoutineId);
-  const accentColor = selectedRoutine?.accentColor ?? selectedEntry?.accentColor ?? '#7B61FF';
+  // Historical snapshots keep their original data; the current UI uses Tempo's palette.
+  const accentColor = '#C7F464';
 
   useEffect(() => {
     if (!isOpen) return undefined;
@@ -68,7 +69,7 @@ export default function RoutineSelector({
       className="relative z-40 mb-5"
     >
       <div
-        className="glass-card rounded-[1.5rem] p-3 border-glow bg-[#0A0A14]/80 backdrop-blur-md transition-all duration-500"
+        className="glass-card rounded-[1.5rem] p-3 border-glow bg-[#121619]/80 backdrop-blur-md transition-all duration-500"
         style={{ borderColor: `${accentColor}33` }}
       >
       <div className="flex items-center gap-3">
@@ -90,7 +91,7 @@ export default function RoutineSelector({
             role="combobox"
             className={`w-full min-h-9 flex items-center justify-between gap-3 rounded-xl border px-3 py-2 text-left transition-all duration-300 ${
               isOpen
-                ? 'bg-white/[0.09] border-plasma/60 shadow-[0_0_22px_rgba(123,97,255,0.16)]'
+                ? 'bg-white/[0.09] border-plasma/60 shadow-[0_0_22px_rgba(199,244,100,0.16)]'
                 : 'bg-white/[0.04] border-white/10 hover:bg-white/[0.07] hover:border-plasma/40'
             } disabled:opacity-60`}
             aria-controls="routine-options"
@@ -123,7 +124,7 @@ export default function RoutineSelector({
                 if (next !== null) { event.preventDefault(); options[next]?.focus(); }
                 if (event.key === 'Tab') setIsOpen(false);
               }}
-              className="absolute left-0 right-0 top-full mt-2 overflow-hidden rounded-2xl border border-plasma/30 bg-[#0C0C17]/95 p-1.5 shadow-[0_18px_45px_rgba(0,0,0,0.65),0_0_25px_rgba(123,97,255,0.12)] backdrop-blur-2xl animate-[routine-menu-in_0.2s_ease-out]"
+              className="absolute left-0 right-0 top-full mt-2 overflow-hidden rounded-2xl border border-plasma/30 bg-[#1C272F]/95 p-1.5 shadow-[0_18px_45px_rgba(0,0,0,0.65),0_0_25px_rgba(199,244,100,0.12)] backdrop-blur-2xl animate-[routine-menu-in_0.2s_ease-out]"
             >
               {routines.map((routine) => {
                 const isSelected = routine.id === selectedRoutineId;
@@ -143,7 +144,7 @@ export default function RoutineSelector({
                   >
                     <span
                       className="w-1.5 h-1.5 rounded-full flex-shrink-0"
-                      style={{ backgroundColor: routine.accentColor }}
+                      style={{ backgroundColor: isSelected ? accentColor : '#79909F' }}
                       aria-hidden="true"
                     />
                     <span className="truncate flex-1">{routine.name}</span>

@@ -2,11 +2,12 @@ import { lazy, Suspense, useState } from 'react';
 import { useAuth } from './hooks/useAuth';
 import LoginPage from './components/LoginPage';
 import { cloudConfigured } from './lib/supabase';
+import StartupScreen from './components/StartupScreen';
 
 const WorkoutApp = lazy(() => import('./components/WorkoutApp'));
 const OAuthConsentPage = lazy(() => import('./components/OAuthConsentPage'));
 
-export default function App() {
+function AppContent() {
   const auth = useAuth();
   const [localPreview, setLocalPreview] = useState(false);
   const oauthConsent = window.location.pathname.replace(/\/$/, '') === '/oauth/consent';
@@ -21,4 +22,8 @@ export default function App() {
       {oauthConsent ? <OAuthConsentPage userId={auth.user?.id ?? null} /> : <WorkoutApp auth={auth} onLogin={() => setLocalPreview(false)} />}
     </Suspense>
   );
+}
+
+export default function App() {
+  return <StartupScreen><AppContent /></StartupScreen>;
 }

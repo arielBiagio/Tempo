@@ -13,6 +13,71 @@ async function enterLocal(page: import('@playwright/test').Page) {
   await expect(metric(page, 'Días entrenando')).toHaveText('0');
 }
 
+test('Tempo: inicio animado, identidad y navegación sin repetir la pantalla de carga', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', error => errors.push(error.message));
+  await page.addInitScript(() => localStorage.setItem('glow-selected-routine', 'ariel-masa-fuerza'));
+  await page.clock.install();
+  await page.goto('/');
+  await expect(page).toHaveTitle('Tempo — Entrená a tu ritmo');
+  const splash = page.getByRole('status', { name: 'Iniciando Tempo' });
+  await expect(splash).toBeVisible();
+  await expect(page.locator('.tempo-startup-track')).toHaveCount(0);
+  expect((await page.locator('.tempo-startup-logo').boundingBox())!.width).toBeLessThanOrEqual(180);
+  await expect(page.locator('.tempo-content')).toHaveAttribute('inert', '');
+  await expect(page.locator('.tempo-content')).toHaveAttribute('aria-hidden', 'true');
+  expect((await page.request.get('/brand/tempo-logo.webp')).ok()).toBe(true);
+  await page.clock.runFor(800);
+  await page.screenshot({ animations: 'disabled', path: 'qa-artifacts/tempo-splash-mobile.png' });
+  await page.clock.runFor(900);
+  await expect(splash).toHaveAttribute('data-phase', 'exiting');
+  await page.clock.runFor(400);
+  await expect(splash).toHaveCount(0);
+  await expect(page.locator('.tempo-content')).not.toHaveAttribute('inert', '');
+  await expect(page.getByRole('img', { name: 'Tempo', exact: true })).toBeVisible();
+  await page.screenshot({ animations: 'disabled', path: 'qa-artifacts/tempo-login-mobile.png' });
+  await page.getByRole('button', { name: 'Continuar sin cuenta', exact: true }).click();
+  await expect(page.getByRole('heading', { name: 'Resumen', exact: true })).toBeVisible();
+  await expect(page.getByRole('combobox')).toContainText('Ariel');
+  await expect(page.locator('.tempo-header-logo')).toBeVisible();
+  await page.clock.resume();
+  await expect(metric(page, 'Días entrenando')).toHaveText('0');
+  await page.evaluate(() => document.fonts.ready);
+  await page.screenshot({ animations: 'disabled', path: 'qa-artifacts/tempo-summary-mobile.png' });
+  await dayA(page).click();
+  await expect(page.getByRole('heading', { name: /Día A — Superior/ })).toBeVisible();
+  await expect(splash).toHaveCount(0);
+  await page.screenshot({ animations: 'disabled', path: 'qa-artifacts/tempo-day-mobile.png' });
+  await summary(page).click();
+  await page.setViewportSize({ width: 320, height: 700 });
+  await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await page.screenshot({ animations: 'disabled', path: 'qa-artifacts/tempo-summary-small.png' });
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.screenshot({ animations: 'disabled', path: 'qa-artifacts/tempo-summary-desktop.png' });
+  expect(errors).toEqual([]);
+});
+
+test('Tempo: movimiento reducido, colores accesibles y recursos de instalación', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.clock.install();
+  await page.goto('/');
+  await page.clock.runFor(250);
+  await expect(page.locator('.tempo-startup')).toHaveCount(0);
+  await expect(page.getByRole('heading', { name: 'Iniciar sesión', exact: true })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Ingresar', exact: true })).toHaveCSS('color', 'rgb(18, 22, 25)');
+  await expect(page.getByRole('button', { name: 'Ingresar', exact: true })).toHaveCSS('background-color', 'rgb(199, 244, 100)');
+  await expect(page.getByRole('heading', { name: 'Iniciar sesión', exact: true })).toHaveCSS('font-family', /Exo 2/);
+  const manifest = await (await page.request.get('/manifest.json')).json();
+  expect(manifest.short_name).toBe('Tempo');
+  expect(manifest.name).toContain('Tempo');
+  for (const icon of manifest.icons) expect((await page.request.get(icon.src)).ok()).toBe(true);
+  await page.clock.resume();
+  expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
+  await page.getByRole('button', { name: 'Continuar sin cuenta', exact: true }).click();
+  await expect(page.getByRole('heading', { name: 'Resumen', exact: true })).toBeVisible();
+  expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
+});
+
 test('información plegable: notas independientes, teclado y progreso intacto', async ({ page }) => {
   await page.addInitScript(() => localStorage.setItem('glow-selected-routine', 'ariel-masa-fuerza'));
   await enterLocal(page);
@@ -27,6 +92,14 @@ test('información plegable: notas independientes, teclado y progreso intacto', 
   const panel = note.locator('..');
   const contentId = await note.getAttribute('aria-controls');
   const content = page.locator(`[id="${contentId}"]`);
+  await expect(note).toHaveAttribute('aria-expanded', 'false');
+  await expect(main).toHaveAttribute('aria-expanded', 'false');
+  await expect(content).toHaveAttribute('inert', '');
+  await expect(content).toHaveCSS('visibility', 'hidden');
+  await note.focus();
+  await page.keyboard.press('Enter');
+  await expect(note).toHaveAttribute('aria-expanded', 'true');
+  await expect.poll(async () => (await panel.boundingBox())!.height).toBeGreaterThan(75);
   const expandedHeight = (await panel.boundingBox())!.height;
   await expect(content).toContainText('6 min en total');
   await page.getByRole('button', { name: 'Marcar Remo de aire suave como completado', exact: true }).click();
@@ -37,7 +110,7 @@ test('información plegable: notas independientes, teclado y progreso intacto', 
   await expect(content).toHaveCSS('visibility', 'hidden');
   await expect.poll(async () => (await panel.boundingBox())!.height).toBeLessThan(52);
   expect(expandedHeight).toBeGreaterThan(75);
-  await expect(main).toHaveAttribute('aria-expanded', 'true');
+  await expect(main).toHaveAttribute('aria-expanded', 'false');
   await note.focus();
   await page.keyboard.press('Space');
   await expect(note).toHaveAttribute('aria-expanded', 'true');
@@ -47,11 +120,15 @@ test('información plegable: notas independientes, teclado y progreso intacto', 
   await page.getByRole('button', { name: /A1 · Press de pecho en máquina, pendiente/ }).click();
   const science = page.getByRole('button', { name: 'Información: Fundamento de A1 · Press de pecho en máquina', exact: true });
   const tip = page.getByRole('button', { name: 'Información: Ejecución de A1 · Press de pecho en máquina', exact: true });
-  await science.click();
   await expect(science).toHaveAttribute('aria-expanded', 'false');
-  await expect(tip).toHaveAttribute('aria-expanded', 'true');
+  await expect(tip).toHaveAttribute('aria-expanded', 'false');
+  await science.click();
+  await expect(science).toHaveAttribute('aria-expanded', 'true');
+  await expect(tip).toHaveAttribute('aria-expanded', 'false');
   await page.getByRole('navigation').getByRole('button', { name: /Día B —/ }).click();
-  await expect(page.getByRole('button', { name: 'Información: Calentamiento', exact: true })).toHaveAttribute('aria-expanded', 'true');
+  await expect(page.getByRole('button', { name: 'Información: Calentamiento', exact: true })).toHaveAttribute('aria-expanded', 'false');
+  await dayA(page).click();
+  await expect(note).toHaveAttribute('aria-expanded', 'false');
 });
 
 test('información plegable: respeta movimiento reducido y conserva el botón compacto', async ({ page }) => {
@@ -62,7 +139,7 @@ test('información plegable: respeta movimiento reducido y conserva el botón co
   const note = page.getByRole('button', { name: 'Información: Calentamiento', exact: true });
   const content = page.locator(`[id="${await note.getAttribute('aria-controls')}"]`);
   await expect(content).toHaveCSS('transition-duration', '0s');
-  await note.click();
+  await expect(note).toHaveAttribute('aria-expanded', 'false');
   await expect(content).toHaveCSS('visibility', 'hidden');
   await expect(note).toBeVisible();
   await expect(note).toHaveText('Información');
@@ -265,6 +342,26 @@ test('navbar pegada al viewport aunque el contenedor mida menos, respetando el �
     expect(Math.round(height - scrolled!.y - scrolled!.height)).toBe(46);
   }
   await page.screenshot({ path: `qa-artifacts/navbar-safe-area-${testInfo.project.name}.png`, animations: 'disabled' });
+});
+
+test('iOS presentación: cabecera opaca y navbar inferior con detección standalone alternativa', async ({ page }, testInfo) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  // Exercise Apple's legacy installed-app flag without pretending to run iOS.
+  await page.addInitScript(() => Object.defineProperty(navigator, 'standalone', { value: true, configurable: true }));
+  await enterLocal(page);
+  await expect(page.locator('meta[name="apple-mobile-web-app-status-bar-style"]')).toHaveAttribute('content', 'black');
+  await expect(page.locator('html')).toHaveAttribute('data-ios-standalone', 'true');
+  const header = page.locator('.app-shell > header');
+  await expect(header).toHaveCSS('background-color', 'rgb(18, 22, 25)');
+  await expect(header).toHaveCSS('backdrop-filter', 'none');
+  const nav = page.getByRole('navigation');
+  for (const height of [852, 740]) {
+    await page.setViewportSize({ width: 393, height });
+    const box = (await nav.boundingBox())!;
+    expect(Math.round(height - box.y - box.height)).toBe(16);
+    await expect(nav.getByRole('button').first()).toBeInViewport();
+  }
+  await page.screenshot({ path: `qa-artifacts/tempo-ios-layout-${testInfo.project.name}.png`, animations: 'disabled' });
 });
 
 test('el flujo nuevo ignora las marcas anteriores y cambia de semana automáticamente', async ({ page }) => {
