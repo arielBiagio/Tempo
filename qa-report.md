@@ -1,5 +1,29 @@
 # QA Report: Tempo (antes GLOW)
 
+## Publicación de títulos completos (2026-10-23)
+
+**Veredicto: publicado en el sitio existente.** Código en `main` mediante
+`8a1be7a`; deploy Netlify `6adba4aed29b067d211cbf85`, contexto production,
+estado ready y marcado como current/published por la API.
+
+- Typecheck, lint, build y 77/77 tests locales correctos antes de publicar.
+  Se mantienen las dos comprobaciones E2E focalizadas de la corrección anterior;
+  no se repitió QA completo ni se probó login con cuentas reales.
+- Se envió una copia aislada de los 31 archivos públicos de `dist/`, sin `.env`,
+  Git ni fuentes privadas. Configuración de staging: publicar `dist`, sin
+  reconstruir el frontend. Estado/configuración temporales bajo `.netlify/`,
+  ahora ignorado por Git; no se modifican URL, variables remotas ni Supabase/MCP.
+- El cliente de Netlify terminó con un assert de libuv en Windows después de
+  devolver IDs válidos. No se duplicó el deploy: se siguió por el conector hasta
+  confirmar ready/current. El despliegue remoto sí terminó correctamente.
+- Lecturas HTTP de la URL pública: HTML 200, bundle principal/CSS/chunk WorkoutApp
+  con hashes SHA-256 iguales al build local. HTML idéntico al normalizar comentarios
+  y formato; Netlify añade un comentario de hosting. No es pérdida de cambios.
+- `/oauth/consent` respondió 200 y conservó `Cache-Control: no-store` y
+  `X-Frame-Options: DENY`. Son comprobaciones de disponibilidad, no validación de
+  autenticación real ni escritura de datos en producción.
+- Sitio: [Tempo](https://gemini-rutina-cele.netlify.app/).
+
 ## Títulos de ejercicios completos (2026-10-23)
 
 **Veredicto: corregido y comprobado localmente.** [S3] `truncate` en el h4 de
