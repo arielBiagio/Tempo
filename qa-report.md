@@ -1,5 +1,21 @@
 # QA Report: Tempo (antes GLOW)
 
+## Títulos de ejercicios completos (2026-10-23)
+
+**Veredicto: corregido y comprobado localmente.** [S3] `truncate` en el h4 de
+ExerciseCard imponía `white-space: nowrap` y puntos suspensivos. Se reproduce
+con “Movilidad de hombros y flexiones escapulares” en la rutina Ariel, día A.
+El test nuevo falla antes del arreglo por `nowrap` y pasa después.
+
+- Se permiten saltos naturales entre palabras, sin límite de líneas; tarjetas
+  crecen con el título. Checkbox y controles laterales no se encogen.
+- Typecheck, lint, build y 77/77 tests locales correctos antes y después.
+- 2/2 E2E focalizados (Chrome/WebKit): nombres completos en 320/393 px, más de una
+  línea, sin desborde horizontal ni cruce con controles; checkbox de 24 px,
+  apertura de detalles y marcado como completo conservados.
+- Captura inspeccionada: `qa-artifacts/exercise-titles-320-webkit-production.png`.
+- Sin QA completo, iPhone físico, producción, commit ni push. No cambios de datos.
+
 ## Navbar +12 px y login compacto (2026-10-18)
 
 Margen inferior 4→16 px en navegador/instalado/fallback. Expectativa geométrica

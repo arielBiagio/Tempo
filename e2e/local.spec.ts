@@ -13,6 +13,39 @@ async function enterLocal(page: import('@playwright/test').Page) {
   await expect(metric(page, 'Días entrenando')).toHaveText('0');
 }
 
+test('ejercicios: títulos largos completos en varias líneas y controles estables', async ({ page }, testInfo) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.addInitScript(() => localStorage.setItem('glow-selected-routine', 'ariel-masa-fuerza'));
+  await enterLocal(page);
+  await dayA(page).click();
+  const name = 'Movilidad de hombros y flexiones escapulares';
+  const title = page.getByRole('heading', { level: 4, name, exact: true });
+  for (const width of [320, 393]) {
+    await page.setViewportSize({ width, height: 852 });
+    await expect(title).toHaveCSS('white-space', 'normal');
+    const geometry = await title.evaluate(element => {
+      const style = getComputedStyle(element);
+      const rect = element.getBoundingClientRect();
+      const row = element.parentElement!.parentElement!.parentElement!;
+      const buttons = Array.from(row.querySelectorAll('button')).map(button => button.getBoundingClientRect());
+      return { height: rect.height, lineHeight: parseFloat(style.lineHeight),
+        overflow: element.scrollWidth > element.clientWidth + 1,
+        controlsClear: buttons.every(box => box.right <= rect.left || box.left >= rect.right),
+        checkboxWidth: buttons[0].width };
+    });
+    expect(geometry.height).toBeGreaterThan(geometry.lineHeight * 1.5);
+    expect(geometry.overflow).toBe(false);
+    expect(geometry.controlsClear).toBe(true);
+    expect(geometry.checkboxWidth).toBe(24);
+    await page.screenshot({ path: `qa-artifacts/exercise-titles-${width}-${testInfo.project.name}.png`, animations: 'disabled' });
+  }
+  await page.getByRole('button', { name: `${name}, pendiente`, exact: true }).click();
+  await expect(page.getByText('Círculos suaves de hombros', { exact: false })).toBeVisible();
+  await page.getByRole('button', { name: `Marcar ${name} como completado`, exact: true }).click();
+  await expect(title).toHaveCSS('white-space', 'normal');
+  await expect(page.getByRole('button', { name: `Marcar ${name} como incompleto`, exact: true })).toBeVisible();
+});
+
 test('Tempo: inicio animado, identidad y navegación sin repetir la pantalla de carga', async ({ page }) => {
   const errors: string[] = [];
   page.on('pageerror', error => errors.push(error.message));

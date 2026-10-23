@@ -31,7 +31,7 @@ function ExerciseCard({ exercise, isCompleted, completedSets = [], onToggleSet, 
       <div className="p-4 flex items-center justify-between gap-3 select-none">
         <button
           onClick={() => onToggleCompleted(exercise.id)}
-          className={`w-6 h-6 rounded-full flex items-center justify-center border transition-all duration-300 ${
+          className={`w-6 h-6 shrink-0 rounded-full flex items-center justify-center border transition-all duration-300 ${
             isCompleted
               ? 'bg-emerald-500 border-emerald-500 text-primary'
               : 'border-zinc-700 hover:border-zinc-500 bg-zinc-950'
@@ -43,7 +43,7 @@ function ExerciseCard({ exercise, isCompleted, completedSets = [], onToggleSet, 
 
         <div className="flex-1 min-w-0" onClick={() => setIsOpen(!isOpen)} role="button" tabIndex={0} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') setIsOpen(!isOpen); }} aria-expanded={isOpen} aria-label={`${exercise.name}, ${isCompleted ? 'completado' : 'pendiente'}`}>
           <div className="flex items-center gap-2 flex-wrap">
-            <h4 className={`font-sans font-semibold text-sm tracking-wide truncate ${
+            <h4 className={`min-w-0 max-w-full whitespace-normal break-words font-sans font-semibold text-sm tracking-wide leading-snug ${
               isCompleted ? 'text-zinc-400 line-through' : 'text-white'
             }`}>
               {exercise.name}
@@ -65,7 +65,7 @@ function ExerciseCard({ exercise, isCompleted, completedSets = [], onToggleSet, 
           </div>
         </div>
 
-        <div className="flex items-center gap-2" onClick={() => setIsOpen(!isOpen)}>
+        <div className="flex shrink-0 items-center gap-2" onClick={() => setIsOpen(!isOpen)}>
           {exercise.loggable && (
             <span className="text-[9px] font-mono text-muted bg-zinc-900/60 border border-zinc-800/80 px-2 py-0.5 rounded-md">
               {completedSets.length}/{exercise.sets}
