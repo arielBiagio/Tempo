@@ -19,6 +19,10 @@ dist-ssr
 playwright-report/
 test-results/
 qa-artifacts/
+/docs/
+/tests/
+/e2e/
+/qa-report.md
 dist-qa-local/
 dist-qa-cloud/
 supabase/.temp/
