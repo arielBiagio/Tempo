@@ -1,102 +1,102 @@
 # Tempo
 
-Aplicación web para organizar rutinas de entrenamiento y registrar el progreso diario. Permite seguir ejercicios y series, guardar el avance en la nube y consultar un resumen de la actividad.
+Web application for organizing workout routines and tracking daily progress. Track exercises and sets, sync progress to the cloud, and view an activity summary.
 
-[Ver la app](https://gemini-rutina-cele.netlify.app/) · [Repositorio en GitHub](https://github.com/arielBiagio/Tempo)
+[Live app](https://gemini-rutina-cele.netlify.app/) · [GitHub repository](https://github.com/arielBiagio/Tempo)
 
-## Funcionalidades
+## Features
 
-- Inicio de sesión con correo y contraseña mediante Supabase Auth.
-- Selección de rutinas organizadas por días, con ejercicios, series, repeticiones, descansos e indicaciones.
-- Registro automático por fecha y semana, sin activar planes ni elegir semanas manualmente.
-- Progreso por ejercicio y serie, independiente para cada rutina y usuario.
-- Resumen de días y semanas con actividad, sesiones completas, ejercicios, series y minutos estimados.
-- Guardado local y sincronización de cambios pendientes al recuperar la conexión, con la sesión y rutina ya cargadas.
-- Interfaz adaptada a móviles, saludo personalizado y estado de guardado en la nube.
-- Identidad Electric Slate, pantalla de inicio animada y cuadros informativos plegables.
-- Consultas de rutinas y estadísticas desde agentes compatibles con MCP y OAuth.
+- Email and password sign-in through Supabase Auth.
+- Select routines organized by training day, with exercises, sets, reps, rest periods, and instructions.
+- Automatic tracking by date and week, without manually activating plans or selecting weeks.
+- Exercise and set progress tracked independently for each routine and user.
+- Activity summary covering active days and weeks, completed sessions, exercises, sets, and estimated minutes.
+- Local storage and synchronization of pending changes when connectivity returns, provided the session and routine have already loaded.
+- Mobile-friendly interface with a personalized greeting and cloud sync status.
+- Electric Slate visual identity, animated startup screen, and collapsible information panels.
+- Routine and statistics queries through agents that support MCP and OAuth.
 
-Los minutos del Resumen se calculan a partir de la duración prevista de las sesiones completas; no representan tiempo cronometrado.
+Minutes in the summary are calculated from the planned duration of completed sessions; they do not represent measured workout time.
 
-## Tecnologías
+## Tech stack
 
-React, TypeScript, Vite y Tailwind CSS. Supabase Auth y PostgreSQL con políticas RLS para autenticación y persistencia; IndexedDB para caché y cambios pendientes. El servidor MCP se ejecuta en Supabase Edge Functions y el frontend se publica en Netlify.
+React, TypeScript, Vite, and Tailwind CSS. Supabase Auth and PostgreSQL with Row Level Security (RLS) policies handle authentication and persistence; IndexedDB stores cached data and pending changes. The MCP server runs on Supabase Edge Functions, and the frontend is hosted on Netlify.
 
-## Integración con agentes: MCP
+## Agent integration: MCP
 
-Tempo expone cinco herramientas de **solo lectura** mediante un servidor MCP remoto con transporte Streamable HTTP. Permiten consultar la información de la cuenta desde un agente compatible, como Sesame, sin abrir la app.
+Tempo exposes five **read-only** tools through a remote MCP server using Streamable HTTP transport. Compatible agents, such as Sesame, can query account information without opening the app.
 
-| Tool | Qué permite consultar |
+| Tool | What it provides |
 | --- | --- |
-| `mi_perfil` | Nombre, zona horaria e identificador de la rutina seleccionada. |
-| `mis_rutinas` | Catálogo de rutinas disponibles, objetivos, nivel y frecuencia. |
-| `mi_rutina` | Rutina seleccionada u otra por ID: calendario, ejercicios, series, repeticiones, descansos e indicaciones, con avance semanal. |
-| `mi_entrenamiento` | Entrenamiento de hoy, mañana o una fecha: ejercicios pendientes, progreso, descanso y próxima sesión prevista. |
-| `mis_estadisticas` | Días y semanas con actividad, sesiones, ejercicios y series completos, y minutos estimados; por histórico, semana, mes o rango de fechas. |
+| `mi_perfil` | Name, time zone, and selected routine ID. |
+| `mis_rutinas` | Available routines, goals, difficulty levels, and training frequency. |
+| `mi_rutina` | The selected routine or another routine by ID: schedule, exercises, sets, reps, rest periods, instructions, and weekly progress. |
+| `mi_entrenamiento` | The workout for today, tomorrow, or a specific date: pending exercises, progress, rest day information, and the next scheduled session. |
+| `mis_estadisticas` | Active days and weeks, completed sessions, exercises and sets, and estimated minutes, across all time, a week, a month, or a date range. |
 
-Ejemplos de preguntas: «¿Qué me toca entrenar mañana?», «¿Qué ejercicios me quedan hoy?» o «¿Cuántos días entrené esta semana?».
+Example questions: “What am I training tomorrow?”, “Which exercises do I have left today?”, or “How many days did I train this week?”
 
-La conexión usa **OAuth** y requiere autorizar la cuenta. Los permisos del MCP y las políticas RLS limitan el acceso a los datos del usuario autenticado. El agente no puede modificar rutinas, registrar ejercicios ni borrar información. Las estadísticas reflejan únicamente los datos sincronizados; los minutos son estimaciones, no tiempo cronometrado.
+The connection uses **OAuth** and requires account authorization. MCP permissions and RLS policies restrict access to the authenticated user's data. The agent cannot modify routines, log exercises, or delete information. Statistics reflect synchronized data only; minutes are estimates, not measured workout time.
 
-En una instalación propia, el endpoint sigue este formato:
+For your own deployment, the endpoint follows this format:
 
 ```text
-https://<tu-proyecto>.supabase.co/functions/v1/glow-mcp
+https://<your-project>.supabase.co/functions/v1/glow-mcp
 ```
 
-La configuración del MCP requiere habilitar el servidor OAuth de Supabase, la pantalla de consentimiento `/oauth/consent` y los permisos incluidos en las migraciones. No se comparten contraseñas ni claves privadas con el agente.
+MCP setup requires enabling the Supabase OAuth server, configuring the `/oauth/consent` consent screen, and applying the permissions included in the migrations. Passwords and private keys are not shared with the agent.
 
-## Decisiones de diseño
+## Design decisions
 
-- **Rutinas JSON sobre fetch:** los planes están separados de la UI y pueden ampliarse sin reescribir las pantallas.
-- **Calendario automático y snapshots:** el avance se registra por fecha y conserva la versión de la rutina utilizada en cada semana, sin alterar el historial cuando cambia el plan.
-- **Guardado local y sincronización:** una cola por cuenta permite recuperar cambios pendientes al volver la conexión; los conflictos entre dispositivos requieren una decisión explícita.
-- **MCP acotado y de solo lectura:** herramientas específicas para consultas de entrenamiento, con OAuth y permisos mínimos en lugar de acceso genérico a la base.
-- **Contexto del agente:** se evaluó [Code Mode](https://blog.cloudflare.com/code-mode/) y se descartó por la escala actual —cinco tools de lectura—; la agregación de estadísticas en SQL cumple el mismo objetivo de no llenar el contexto con el historial bruto, sin añadir un entorno de ejecución de código.
+- **JSON-over-fetch data layer:** workout plans are separate from the UI and can be extended without rewriting screens.
+- **Automatic scheduling and snapshots:** progress is recorded by date, preserving the routine version used each week so that plan changes do not alter historical records.
+- **Local storage and synchronization:** a per-account queue preserves pending changes until connectivity returns; conflicts between devices require an explicit user decision.
+- **Focused, read-only MCP:** purpose-built workout tools use OAuth and least-privilege permissions instead of generic database access.
+- **Agent context:** [Code Mode](https://blog.cloudflare.com/code-mode/) was evaluated and ruled out at the current scale—five read-only tools. SQL statistics aggregation serves the same context-saving goal by keeping raw history out of the agent's context, without adding a code execution runtime.
 
-## Desarrollo local
+## Local development
 
-Requiere Node.js y npm. El proyecto se verificó con Node.js 24.
+Requires Node.js and npm. The project has been verified with Node.js 24.
 
-1. Instalá las dependencias:
+1. Install dependencies:
 
    ```sh
    npm ci
    ```
 
-2. Copiá `.env.example` a `.env.local` y completá la configuración pública de Supabase:
+2. Copy `.env.example` to `.env.local` and add your public Supabase configuration:
 
    ```dotenv
-   VITE_SUPABASE_URL=https://tu-proyecto.supabase.co
+   VITE_SUPABASE_URL=https://your-project.supabase.co
    VITE_SUPABASE_PUBLISHABLE_KEY=sb_publishable_...
    ```
 
-   Para una instalación nueva, aplicá las [migraciones SQL](supabase/migrations/) en orden y configurá una cuenta con correo y contraseña en Supabase Auth. No vuelvas a ejecutarlas sobre una instalación ya migrada. Usá únicamente la clave pública de cliente: nunca una clave secreta o `service_role`. No subas `.env.local` al repositorio. Sin configuración de Supabase, la app permite una vista previa con guardado local.
+   For a new installation, apply the [SQL migrations](supabase/migrations/) in order and set up an email and password account in Supabase Auth. Do not rerun migrations on an existing migrated installation. Use only the public client key, never a secret or `service_role` key. Do not commit `.env.local`. Without Supabase configuration, the app offers a preview with local storage.
 
-3. Iniciá el servidor:
+3. Start the development server:
 
    ```sh
    npm run dev
    ```
 
-## Build y despliegue
+## Build and deployment
 
 ```sh
 npm run build
 npm run preview
 ```
 
-El build se genera en `dist/` y puede desplegarse en Netlify u otro hosting estático. Las variables de Supabase deben estar configuradas antes de compilar.
+The production build is generated in `dist/` and can be deployed to Netlify or another static host. Supabase environment variables must be configured before building.
 
-## Comprobaciones locales
+## Local checks
 
 ```sh
 npm run typecheck
 npm run lint
 ```
 
-## Personalizar las rutinas
+## Customizing routines
 
-Las rutinas se definen en `public/routines/`. Al personalizarlas, conservá los IDs existentes y aumentá la versión cuando cambies la prescripción para no alterar el historial.
+Routines are defined in `public/routines/`. When customizing them, preserve existing IDs and increase the version when changing the workout prescription to keep historical records intact.
 
-Algunos identificadores conservan el nombre anterior de la app por compatibilidad con los datos y las conexiones existentes.
+Some identifiers retain the app's previous name for compatibility with existing data and connections.
